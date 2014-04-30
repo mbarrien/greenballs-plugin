@@ -34,6 +34,11 @@ public class GreenBallFilter implements Filter {
 
   final Pattern patternYellow = Pattern.compile(String.format(patternStr, "yellow"));
 
+  final Pattern patternGrey = Pattern.compile(String.format(patternStr, "grey"));
+  final Pattern patternDisabled = Pattern.compile(String.format(patternStr, "disabled"));
+  final Pattern patternAborted = Pattern.compile(String.format(patternStr, "aborted"));
+  final Pattern patternNoBuilt = Pattern.compile(String.format(patternStr, "nobuilt"));
+
   final Logger logger = Logger.getLogger("hudson.plugins.greenballs");
 
   public void init(FilterConfig config) throws ServletException {
@@ -66,6 +71,26 @@ public class GreenBallFilter implements Filter {
     Matcher m;
     User user = Hudson.getInstance().getUser(Hudson.getAuthentication().getName());
     if (user!=null) {
+      EugeneProperty EugeneProperty = user.getProperty(EugeneProperty.class);
+      if (EugeneProperty != null && EugeneProperty.isEnabledEugeneSupport()) {
+        if ((m = patternBlue.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/rainbowgene/rainbowgene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternRed.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/angrygene/angrygene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternYellow.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/yellowgene/yellowgene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternGrey.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/eugene/eugene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternDisabled.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/eugene/eugene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternAborted.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/eugene/eugene_" + m.group(1) + m.group(2) + ".gif";
+        } else if ((m = patternNoBuilt.matcher(uri)).find()) {
+          return "/plugin/greenballs/eugene/eugene/eugene_" + m.group(1) + m.group(2) + ".gif";
+        }
+        return null;
+      }
+
       ColorBlindProperty colorBlindProperty = user.getProperty(ColorBlindProperty.class);
       if (colorBlindProperty != null && colorBlindProperty.isEnabledColorBlindSupport()) {
         if ((m = patternBlue.matcher(uri)).find()) {
